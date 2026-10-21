@@ -1,0 +1,8 @@
+{
+  "appId": "com.english.daily",
+  "appName": "英语随身学",
+  "webDir": "www",
+  "server": {
+    "androidScheme": "https"
+  }
+}

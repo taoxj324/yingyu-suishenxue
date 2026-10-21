@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <meta name="app-version-name" content="1.18" />
+  <meta name="app-version-code" content="18" />
+  <title>英语随身学 · 小学至高中+新概念</title>
+  <link rel="stylesheet" href="css/style.css" />
+  <!-- 启动加载器：须位于样式之后（在线样式才能覆盖）、业务脚本之前 -->
+  <script src="js/boot.js"></script>
+</head>
+<body>
+  <div class="app">
+    <!-- 顶部状态栏 -->
+    <header class="topbar">
+      <div class="brand">
+        <span class="logo">📚</span>
+        <span class="title">英语随身学</span>
+      </div>
+      <div class="status">
+        <span class="day-nav">
+          <button id="day-prev" class="day-arrow" title="上一课" aria-label="上一课">‹</button>
+          <button id="hdr-day" class="chip day-chip" title="点击选择要学的第几天">第 1 天</button>
+          <button id="day-next" class="day-arrow" title="下一课" aria-label="下一课">›</button>
+        </span>
+        <span id="hdr-words" class="chip">已学单词约 5 个</span>
+        <span id="hdr-errors" class="chip warn">错题 0 个</span>
+      </div>
+      <div class="subbar">
+        <span id="hdr-date">日期</span>
+        <select id="grade-select" class="grade-select" title="选择年级"></select>
+        <button id="plan-open" class="plan-btn" title="设定学习进度">🎯 进度</button>
+        <button id="settings-open" class="plan-btn" title="检查更新与设置">⚙️ 设置</button>
+      </div>
+    </header>
+
+    <!-- 标签页 -->
+    <nav class="tabs">
+      <button class="tab-btn active" data-tab="study">📖 学习</button>
+      <button class="tab-btn" data-tab="match">🧩 消消乐</button>
+      <button class="tab-btn" data-tab="dict">✍️ 听写</button>
+      <button class="tab-btn" data-tab="error">📕 错题</button>
+    </nav>
+
+    <main class="content">
+      <!-- 学习面板 -->
+      <section id="panel-study" class="panel active">
+        <h2 class="section-title">🌟 今日单词（5个）</h2>
+        <p class="hint">点击 🔊 可以听发音，跟着读一读吧！</p>
+        <p id="study-unit" class="hint unit-line"></p>
+        <div id="study-words" class="word-grid"></div>
+
+        <h2 class="section-title">💬 每日一句</h2>
+        <div id="study-sentence"></div>
+      </section>
+
+      <!-- 单词消消乐面板 -->
+      <section id="panel-match" class="panel">
+        <h2 class="section-title">🧩 单词消消乐</h2>
+        <div id="match-body"></div>
+      </section>
+
+      <!-- 听写面板 -->
+      <section id="panel-dict" class="panel">
+        <h2 id="dict-head" class="section-title">✍️ 听写练习</h2>
+        <div id="dict-body"></div>
+      </section>
+
+      <!-- 错题面板 -->
+      <section id="panel-error" class="panel">
+        <h2 class="section-title">📕 错题本</h2>
+        <div id="error-body"></div>
+      </section>
+    </main>
+
+    <footer class="foot">
+      数据本地保存于本设备 · 发音优先使用系统语音引擎，不可用时自动切换在线发音（需联网） · 版本 <span id="foot-version">v1.18</span>
+    </footer>
+  </div>
+
+  <!-- 学习进度面板：跳到第 N 天 / 设定开始日期 / 跳到某单元 -->
+  <div id="plan-modal" class="modal-mask" hidden>
+    <div class="modal">
+      <h3 class="modal-title">🎯 选择学习进度</h3>
+
+      <div class="plan-row">
+        <label class="plan-label" for="plan-day">跳到第</label>
+        <input id="plan-day" class="plan-input num" type="number" min="1" step="1" inputmode="numeric" />
+        <span class="plan-suffix">天</span>
+        <button id="plan-day-go" class="btn primary small">跳转</button>
+        <span id="plan-day-max" class="plan-max"></span>
+      </div>
+
+      <div class="plan-row">
+        <label class="plan-label" for="plan-start">计划开始日期</label>
+        <input id="plan-start" class="plan-input" type="date" />
+        <button id="plan-start-go" class="btn ghost small">应用</button>
+      </div>
+
+      <div class="plan-row wrap">
+        <label class="plan-label" for="plan-grade">跳到单元</label>
+        <select id="plan-grade" class="plan-select"></select>
+        <select id="plan-unit" class="plan-select wide"></select>
+        <select id="plan-group" class="plan-select narrow"></select>
+        <button id="plan-unit-go" class="btn ghost small">跳转</button>
+      </div>
+
+      <p id="plan-tip" class="plan-tip"></p>
+      <p class="plan-note">提示：手动选择天数后，进度就不再随系统日期自动推进，可在下方恢复跟随日期。</p>
+
+      <div class="modal-actions">
+        <button id="plan-reset" class="btn ghost small">恢复跟随日期</button>
+        <button id="plan-close" class="btn primary small">关闭</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 设置与在线更新面板 -->
+  <div id="settings-modal" class="modal-mask" hidden>
+    <div class="modal">
+      <h3 class="modal-title">⚙️ 设置与更新</h3>
+
+      <div class="plan-row">
+        <span class="plan-label">当前版本</span>
+        <span id="set-curver" class="set-curver"></span>
+      </div>
+
+      <div class="plan-row">
+        <span class="plan-label">更新状态</span>
+        <span id="set-status" class="set-status warn">尚未检查</span>
+      </div>
+
+      <div class="plan-row wrap">
+        <label class="plan-label" for="set-url">更新地址</label>
+        <input id="set-url" class="plan-input wide" type="url" inputmode="url"
+               placeholder="https://用户名.github.io/仓库/version.json" />
+        <button id="set-url-save" class="btn ghost small">保存</button>
+      </div>
+
+      <p class="plan-note">填好更新地址后，每次打开 App 会自动检查新版本并后台下载，校验通过后下次启动自动生效，无需安装。留空则关闭自动更新。</p>
+      <p class="plan-note">在线更新只更新词库、脚本和样式；若新版本涉及 App 界面结构变化，仍需安装新的 APK。</p>
+
+      <div class="modal-actions">
+        <button id="set-clear" class="btn ghost small" hidden>恢复内置版本</button>
+        <button id="set-restart" class="btn ghost small" hidden>立即重启生效</button>
+        <button id="set-check" class="btn primary small">检查更新</button>
+        <button id="set-close" class="btn ghost small">关闭</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 业务脚本由 js/boot.js 按序加载（支持在线更新包优先），此处仅保留原生插件注册 -->
+  <script type="module" src="js/cap-register.js"></script>
+</body>
+</html>

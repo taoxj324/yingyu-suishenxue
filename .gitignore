@@ -1,0 +1,17 @@
+# 生成物 / 本地环境
+cap/www/
+cap/node_modules/
+cap/android/.gradle/
+cap/android/build/
+cap/android/app/build/
+cap/android/local.properties
+ota-site/
+__pycache__/
+*.pyc
+
+# 交付用 APK（体积大，随发随传，不入库）
+*.apk
+
+# 工具目录
+.codebuddy/
+.DS_Store
