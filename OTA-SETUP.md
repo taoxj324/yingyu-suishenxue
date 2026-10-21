@@ -1,38 +1,24 @@
-# 在线自动升级配置指南（地址已内置）
+# 在线自动升级配置（已完成 ✅）
 
-App 内置了在线更新功能：**更新地址已烧进 APK，无需任何配置**——启动时自动检查线上新版本，后台下载并校验，**下次启动自动生效，无需安装 APK**。按下面两步操作即可开通。
+App 内置了在线更新功能：**更新地址已烧进 APK，无需任何配置**——启动时自动检查线上新版本，后台下载并校验，**下次启动自动生效，无需安装 APK**。
 
----
+本配置已于 **2026-10-21** 完成并验证通过：
 
-## 第一步：把项目推送到 GitHub
-
-在项目根目录（本目录）执行：
-
-```bash
-git init
-git add .
-git commit -m "英语随身学 v1.19"
-git branch -M main
-git remote add origin https://github.com/<你的用户名>/<仓库名>.git
-git push -u origin main
-```
-
-> 仓库名建议用英文，如 `yingyu-suishenxue`。推送前确认 `.gitignore` 已排除 `cap/www`、`*.apk` 等生成物（本项目已配好）。
-
-## 第二步：开启 GitHub Pages
-
-1. 打开仓库页面 → **Settings** → **Pages**
-2. **Source** 选择 **GitHub Actions**
-3. 等待 1～2 分钟，页面顶部会出现 `Your site is live at https://<用户名>.github.io/<仓库名>/`
-
-推送完成后，App 内置的更新地址 `https://taoxj324.github.io/yingyu-suishenxue/version.json` 即可访问，已安装 App 的用户下次打开就会收到更新。
+| 项目 | 值 |
+| --- | --- |
+| GitHub 仓库 | https://github.com/taoxj324/yingyu-suishenxue |
+| 更新地址（App 内置） | `https://taoxj324.github.io/yingyu-suishenxue/version.json` |
+| 当前线上版本 | versionCode 19（v1.19），含 5 个文件（js×4 + css×1），sha256 已校验 |
+| 发布方式 | 推送到 main → GitHub Actions 自动打包发布（Pages 源已设为 GitHub Actions） |
 
 ---
 
 ## 以后如何发布新版本
 
-1. 改完代码后，升级 `cap/android/app/build.gradle` 里的 `versionCode`（只增不减，如 19 → 20）和 `versionName`（如 "1.19" → "1.20"），并同步 `index.html` 的页脚版本号与 `<meta name="app-version-name">`
+1. 改完代码后，升级 `cap/android/app/build.gradle` 里的 `versionCode`（只增不减，如 19 → 20）和 `versionName`（如 "1.19" → "1.20"），并同步 `index.html` 的页脚版本号与 `<meta name="app-version-name">` / `<meta name="app-version-code">`
 2. `git push` —— GitHub Actions 自动打包并发布，**已安装 App 的用户下次打开就会收到更新**
+
+> 当前 v1.19 的线上包与 APK 内置版本一致，因此 App 会显示「已是最新版本」；下次发布 versionCode ≥ 20 的包时，用户才会收到更新。
 
 也可以在本地手动打包预览：
 
