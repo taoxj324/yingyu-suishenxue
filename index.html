@@ -3,8 +3,8 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-  <meta name="app-version-name" content="1.18" />
-  <meta name="app-version-code" content="18" />
+  <meta name="app-version-name" content="1.19" />
+  <meta name="app-version-code" content="19" />
   <title>英语随身学 · 小学至高中+新概念</title>
   <link rel="stylesheet" href="css/style.css" />
   <!-- 启动加载器：须位于样式之后（在线样式才能覆盖）、业务脚本之前 -->
@@ -75,7 +75,7 @@
     </main>
 
     <footer class="foot">
-      数据本地保存于本设备 · 发音优先使用系统语音引擎，不可用时自动切换在线发音（需联网） · 版本 <span id="foot-version">v1.18</span>
+      数据本地保存于本设备 · 发音优先使用系统语音引擎，不可用时自动切换在线发音（需联网） · 版本 <span id="foot-version">v1.19</span>
     </footer>
   </div>
 
@@ -134,16 +134,17 @@
       <div class="plan-row wrap">
         <label class="plan-label" for="set-url">更新地址</label>
         <input id="set-url" class="plan-input wide" type="url" inputmode="url"
-               placeholder="https://用户名.github.io/仓库/version.json" />
+               placeholder="留空并保存 = 关闭自动更新" />
         <button id="set-url-save" class="btn ghost small">保存</button>
       </div>
 
-      <p class="plan-note">填好更新地址后，每次打开 App 会自动检查新版本并后台下载，校验通过后下次启动自动生效，无需安装。留空则关闭自动更新。</p>
+      <p class="plan-note">已内置官方更新地址（taoxj324.github.io/yingyu-suishenxue），无需任何配置：每次打开 App 会自动检查新版本并后台下载，校验通过后下次启动自动生效。如需更换地址可自行填写；<b>清空并保存</b>则关闭自动更新。</p>
       <p class="plan-note">在线更新只更新词库、脚本和样式；若新版本涉及 App 界面结构变化，仍需安装新的 APK。</p>
 
       <div class="modal-actions">
         <button id="set-clear" class="btn ghost small" hidden>恢复内置版本</button>
         <button id="set-restart" class="btn ghost small" hidden>立即重启生效</button>
+        <button id="set-default" class="btn ghost small" hidden>恢复默认地址</button>
         <button id="set-check" class="btn primary small">检查更新</button>
         <button id="set-close" class="btn ghost small">关闭</button>
       </div>

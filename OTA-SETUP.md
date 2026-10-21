@@ -1,6 +1,6 @@
-# 在线自动升级配置指南（3 步开通）
+# 在线自动升级配置指南（地址已内置）
 
-App 内置了在线更新功能：启动时自动检查线上新版本，后台下载并校验，**下次启动自动生效，无需安装 APK**。按下面三步操作即可开通。
+App 内置了在线更新功能：**更新地址已烧进 APK，无需任何配置**——启动时自动检查线上新版本，后台下载并校验，**下次启动自动生效，无需安装 APK**。按下面两步操作即可开通。
 
 ---
 
@@ -11,7 +11,7 @@ App 内置了在线更新功能：启动时自动检查线上新版本，后台�
 ```bash
 git init
 git add .
-git commit -m "英语随身学 v1.18"
+git commit -m "英语随身学 v1.19"
 git branch -M main
 git remote add origin https://github.com/<你的用户名>/<仓库名>.git
 git push -u origin main
@@ -25,21 +25,13 @@ git push -u origin main
 2. **Source** 选择 **GitHub Actions**
 3. 等待 1～2 分钟，页面顶部会出现 `Your site is live at https://<用户名>.github.io/<仓库名>/`
 
-## 第三步：在 App 里填更新地址
-
-打开 App → 顶部 **⚙️ 设置** → 「更新地址」填入：
-
-```
-https://<你的用户名>.github.io/<仓库名>/version.json
-```
-
-点「保存」，再点「检查更新」验证。显示「已是最新版本」即配置成功。
+推送完成后，App 内置的更新地址 `https://taoxj324.github.io/yingyu-suishenxue/version.json` 即可访问，已安装 App 的用户下次打开就会收到更新。
 
 ---
 
 ## 以后如何发布新版本
 
-1. 改完代码后，升级 `cap/android/app/build.gradle` 里的 `versionCode`（只增不减，如 18 → 19）和 `versionName`（如 "1.18" → "1.19"），并同步 `index.html` 的页脚版本号与 `<meta name="app-version-name">`
+1. 改完代码后，升级 `cap/android/app/build.gradle` 里的 `versionCode`（只增不减，如 19 → 20）和 `versionName`（如 "1.19" → "1.20"），并同步 `index.html` 的页脚版本号与 `<meta name="app-version-name">`
 2. `git push` —— GitHub Actions 自动打包并发布，**已安装 App 的用户下次打开就会收到更新**
 
 也可以在本地手动打包预览：
@@ -50,6 +42,13 @@ python3 publish/build_bundle.py --notes "· 更新内容一
 ```
 
 产出在 `ota-site/` 目录，可传到任意静态托管（服务器 / OSS / 网盘直链均可）。
+
+## 想换更新地址 / 关闭自动更新？
+
+打开 App → **⚙️ 设置**：
+
+- **更换地址**：在「更新地址」输入框填新地址 → 保存
+- **关闭自动更新**：清空输入框 → 保存（设置里会出现「恢复默认地址」按钮，可随时一键开启）
 
 ## 注意事项
 

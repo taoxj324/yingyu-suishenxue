@@ -522,6 +522,7 @@
     if (s === "checking" || s === "downloading") return "info";
     return "warn";
   }
+  function getEffectiveUrl() { return window.OTA ? OTA.getUrl() : ""; }
 
   function renderSettings() {
     const cur = $("#set-curver");
@@ -537,9 +538,10 @@
     if (el) { el.textContent = st.msg || "—"; el.className = "set-status " + otaStatusClass(st.state); }
     const url = $("#set-url");
     if (url && document.activeElement !== url) url.value = window.OTA ? OTA.getUrl() : "";
-    const clear = $("#set-clear"), restart = $("#set-restart");
+    const clear = $("#set-clear"), restart = $("#set-restart"), def = $("#set-default");
     if (clear) clear.hidden = !window.__OTA_APPLIED__;
     if (restart) restart.hidden = st.state !== "ready";
+    if (def) def.hidden = !!getEffectiveUrl();
   }
 
   function bindSettingsModal() {
@@ -553,7 +555,10 @@
     $("#set-url-save").addEventListener("click", () => {
       OTA.setUrl($("#set-url").value);
       renderSettings();
-      showToast(OTA.getUrl() ? "更新地址已保存，将自动检查更新" : "已清空更新地址，自动更新已关闭");
+      const v = OTA.getUrl();
+      showToast(v
+        ? (v === OTA.DEFAULT_URL ? "已恢复内置默认更新地址" : "更新地址已保存，将自动检查更新")
+        : "已关闭自动更新（地址已清空）");
     });
 
     // 手动检查更新
@@ -571,6 +576,13 @@
       if (confirm("恢复使用 App 内置版本？已下载的在线更新内容将被清除。")) OTA.clearBundle();
     });
     $("#set-restart").addEventListener("click", () => OTA.restartNow());
+
+    // 关闭自动更新后，可一键恢复内置默认地址
+    $("#set-default").addEventListener("click", () => {
+      OTA.setUrl(OTA.DEFAULT_URL);
+      renderSettings();
+      showToast("已恢复内置默认更新地址");
+    });
 
     document.addEventListener("keydown", e => { if (e.key === "Escape" && settingsOpen()) closeSettings(); });
   }

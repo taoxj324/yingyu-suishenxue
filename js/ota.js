@@ -7,13 +7,18 @@
 (function () {
   "use strict";
 
-  var LS_URL = "wb_ota_url";     // version.json 地址（留空 = 关闭自动更新）
+  var LS_URL = "wb_ota_url";     // 自定义更新地址；缺省=用内置 DEFAULT_URL；空串=关闭自动更新
   var LS_LAST = "wb_ota_last";   // 上次自动检查时间戳
   var KEY_BUNDLE = "wb_ota_bundle";
   var CHECK_INTERVAL = 6 * 3600 * 1000; // 自动检查最小间隔
   var T_MANIFEST = 8000;   // manifest 超时（毫秒）
   var T_FILE = 20000;      // 单文件下载超时（毫秒）
   var FILES = ["js/data.js", "js/_unit_names.js", "js/ota.js", "js/app.js", "css/style.css"];
+
+  /* 内置默认更新地址（GitHub Pages 自动发布，仓库 taoxj324/yingyu-suishenxue）。
+     用户无需任何配置即可接收在线更新；设置里可改成其它地址，
+     清空并保存则关闭自动更新。 */
+  var DEFAULT_URL = "https://taoxj324.github.io/yingyu-suishenxue/version.json";
 
   var state = { state: "idle", msg: "尚未检查" };
   var busy = false;
@@ -157,14 +162,19 @@
   }
 
   /* -------------------- 对外接口 -------------------- */
+  /* 生效地址：未配置过 → 内置默认；配置过 → 用户值（空串=主动关闭） */
   function getUrl() {
-    try { return (localStorage.getItem(LS_URL) || "").trim(); } catch (e) { return ""; }
+    var v = null;
+    try { v = localStorage.getItem(LS_URL); } catch (e) {}
+    if (v === null) return DEFAULT_URL;
+    return (v || "").trim();
   }
   function setUrl(u) {
     u = (u || "").trim();
     try {
-      if (u) localStorage.setItem(LS_URL, u); else localStorage.removeItem(LS_URL);
+      localStorage.setItem(LS_URL, u); // 空串 = 关闭自动更新
     } catch (e) {}
+    if (!u) setStatus("unconfigured", "自动更新已关闭");
   }
   function clearBundle() {
     try { localStorage.removeItem(KEY_BUNDLE); } catch (e) {}
@@ -186,6 +196,7 @@
   window.OTA = {
     version: 1,
     FILES: FILES,
+    DEFAULT_URL: DEFAULT_URL,
     init: init,
     check: check,
     checkNow: function () { return check(true); },
