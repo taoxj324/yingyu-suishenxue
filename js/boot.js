@@ -64,7 +64,8 @@
     location.reload();
   }
 
-  /* 内联执行（转义 </script 防止意外闭合标签） */
+  /* 内联执行（转义 </script 防止意外闭合标签）。
+     注意：内联脚本在 appendChild 时同步执行，语法错误会同步抛出，可被捕获 */
   function runInline(text) {
     var s = document.createElement("script");
     s.textContent = String(text).replace(/<\/script/gi, "<\\/script");
@@ -111,7 +112,14 @@
     chain = chain.then(function () {
       var ov = bundle && typeof bundle.files[path] === "string" ? bundle.files[path] : null;
       if (ov && ov.length > 0) {
-        runInline(ov);
+        try {
+          runInline(ov);
+        } catch (e) {
+          // 在线版语法错误（插入时同步抛出）：立即回退
+          warn("[OTA] 在线版语法错误：" + path + " → " + (e && e.message));
+          rollback("在线版语法错误：" + path);
+          return loadBundled(path); // 已回退过（不重载）时兜底继续
+        }
         if (!sentinelOk(path)) {
           rollback("在线版异常：" + path);
           return loadBundled(path); // 已回退过（不重载）时兜底继续

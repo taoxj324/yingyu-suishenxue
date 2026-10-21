@@ -799,7 +799,7 @@
 
   /* 页脚版本：内置版本 + 在线更新标识（由 OTA 加载时显示） */
   function renderFooterVersion() {
-    const el = $("foot-version");
+    const el = $("#foot-version");
     if (!el) return;
     let t = "v" + (window.__BUNDLED_VN__ || window.__BUNDLED_VC__ || "?");
     if (window.__OTA_APPLIED__) {
@@ -1052,7 +1052,9 @@
     setTimeout(detectTts, 1200);
   }
 
-  document.addEventListener("DOMContentLoaded", init);
   // 供 boot.js 哨兵检测：本 IIFE 完整执行（在线更新版异常时据此回退）
   window.__APP_READY__ = true;
+  // 动态加载（boot.js）时 DOMContentLoaded 可能已触发，需按 readyState 兜底
+  if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", init);
+  else init();
 })();
