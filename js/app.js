@@ -54,6 +54,18 @@
     return state.grade ? WORD_BANK.filter(w => w.g === state.grade) : WORD_BANK;
   }
 
+  // 音标索引：英文 -> 音标（词库未收录或为空时返回 ""）
+  const PH_BY_EN = (function () {
+    const m = Object.create(null);
+    WORD_BANK.forEach(function (w) { if (w.ph) m[w.en] = w.ph; });
+    return m;
+  })();
+  function phOf(en) { return PH_BY_EN[en] || ""; }
+  function phHtml(en, cls) {
+    const p = phOf(en);
+    return p ? '<div class="' + (cls || "word-ph") + '">/' + escapeHtml(p) + "/</div>" : "";
+  }
+
   // 年级代号 -> 显示名称
   function gradeName(g) {
     if (g === 10) return "高一";
@@ -600,6 +612,7 @@
         <div class="word-no">${i + 1}</div>
         <button class="speak-btn" data-speak="${escapeAttr(w.en)}" title="点击听发音">🔊</button>
         <div class="word-en" data-speak="${escapeAttr(w.en)}">${escapeHtml(w.en)}</div>
+        ${w.ph ? `<div class="word-ph">/${escapeHtml(w.ph)}/</div>` : ""}
         <div class="word-zh">${escapeHtml(w.zh)}</div>
         <div class="word-g">${gradeName(w.g)}</div>
       </div>
@@ -709,7 +722,7 @@
         <span class="r-mark">${r.correct ? "✅" : "❌"}</span>
         <span class="r-zh">${escapeHtml(r.zh)}</span>
         <span class="r-answer">你的答案：${escapeHtml(r.answer || "（空）")}</span>
-        ${r.correct ? "" : `<span class="r-correct">正确答案：<b data-speak="${escapeAttr(r.en)}" class="link">${escapeHtml(r.en)}</b> 🔊</span>`}
+        ${r.correct ? "" : `<span class="r-correct">正确答案：<b data-speak="${escapeAttr(r.en)}" class="link">${escapeHtml(r.en)}</b> 🔊${phOf(r.en) ? ` <span class="r-ph">/${escapeHtml(phOf(r.en))}/</span>` : ""}</span>`}
       </div>
     `).join("");
 

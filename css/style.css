@@ -257,6 +257,14 @@ html, body {
   word-break: break-word;
 }
 .word-zh { font-size: 15px; color: var(--muted); }
+.word-ph {
+  font-size: 13px;
+  color: #8a94a6;
+  line-height: 1.35;
+  margin: -2px 0 4px;
+  letter-spacing: 0.2px;
+  word-break: break-word;
+}
 .word-g {
   display: inline-block;
   margin-top: 8px;
@@ -363,6 +371,7 @@ html, body {
 .r-zh { font-weight: 700; }
 .r-answer { color: var(--muted); font-size: 13px; }
 .r-correct { color: var(--bad); font-size: 14px; }
+.r-ph { color: var(--muted); font-size: 13px; margin-left: 4px; }
 .link { color: var(--primary-d); cursor: pointer; text-decoration: underline; }
 
 /* ---------- 错题本 ---------- */
