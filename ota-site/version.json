@@ -1,0 +1,28 @@
+{
+  "version": "1.23",
+  "versionCode": 23,
+  "date": "2026-10-28",
+  "notes": "在线更新增加多通道与重试（v1.23）\n· 清单请求改为 GitHub Pages / jsDelivr / Fastly 三通道并发，谁先返回用谁\n· manifest 超时 8s→12s，单文件 20s→30s，失败自动重试\n· 发布流水线同步 ota-site 到仓库，供 jsDelivr 镜像读取\n· versionCode 22 → 23",
+  "files": {
+    "js/data.js": {
+      "url": "v23/js/data.js",
+      "sha256": "edb919616eec3aa2560c5582d8a7fab73f947f69811db4a7693619b2eef46d2b"
+    },
+    "js/_unit_names.js": {
+      "url": "v23/js/_unit_names.js",
+      "sha256": "efa4b8559f623ea7faf9692a008b7cd06124bbd5faf9330dae2f6914b5a074b7"
+    },
+    "js/ota.js": {
+      "url": "v23/js/ota.js",
+      "sha256": "4e02d1c128049100a5f96ae3799fe740f77bcb788d5f98a6d8482d1c0a7b6213"
+    },
+    "js/app.js": {
+      "url": "v23/js/app.js",
+      "sha256": "8310dc22efb0195da0eee41bf3571ce98f823235f6b5e6dcdd3a50af3f41d0a6"
+    },
+    "css/style.css": {
+      "url": "v23/css/style.css",
+      "sha256": "7ef7e224e606ca861844ac6cacb8e85c99af223800458514e8e059941e26cd6f"
+    }
+  }
+}
