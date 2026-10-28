@@ -14,7 +14,7 @@ on:
   workflow_dispatch:
 
 permissions:
-  contents: read
+  contents: write
   pages: write
   id-token: write
 
@@ -34,6 +34,21 @@ jobs:
 
       - name: 打包更新包并生成 version.json
         run: python3 publish/build_bundle.py --notes "${{ github.event.head_commit.message }}"
+
+      # 把构建产物同步回仓库，供 jsDelivr 镜像读取（GitHub Pages 不可达时的备用通道）。
+      # ota-site 不在触发路径内，不会造成循环构建。
+      - name: 同步镜像目录（jsDelivr 兜底）
+        run: |
+          ls -d ota-site/v* 2>/dev/null | sort -V | head -n -3 | xargs -r rm -rf
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -f ota-site
+          if git diff --cached --quiet; then
+            echo "镜像无变化"
+          else
+            git commit -m "chore: 同步 OTA 镜像 [skip ci]"
+            git push
+          fi
 
       - uses: actions/configure-pages@v5
 
