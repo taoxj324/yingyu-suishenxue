@@ -8,7 +8,7 @@ App 内置了在线更新功能：**更新地址已烧进 APK，无需任何配�
 | --- | --- |
 | GitHub 仓库 | https://github.com/taoxj324/yingyu-suishenxue |
 | 更新地址（App 内置） | `https://taoxj324.github.io/yingyu-suishenxue/version.json` |
-| 当前线上版本 | versionCode 23（v1.23，多通道更新），含 5 个文件（js×4 + css×1），sha256 已校验 |
+| 当前线上版本 | versionCode 24（v1.24，七年级下册词库），含 5 个文件（js×4 + css×1），sha256 已校验 |
 | 发布方式 | 推送到 main → GitHub Actions 自动打包发布（Pages 源已设为 GitHub Actions） |
 
 ---
@@ -18,7 +18,7 @@ App 内置了在线更新功能：**更新地址已烧进 APK，无需任何配�
 1. 改完代码后，升级 `cap/android/app/build.gradle` 里的 `versionCode`（只增不减，如 19 → 20）和 `versionName`（如 "1.19" → "1.20"），并同步 `index.html` 的页脚版本号与 `<meta name="app-version-name">` / `<meta name="app-version-code">`
 2. `git push` —— GitHub Actions 自动打包并发布，**已安装 App 的用户下次打开就会收到更新**
 
-> 当前线上 v1.23 的更新包与 APK 内置版本一致，因此 App 会显示「已是最新版本」；下次发布 versionCode ≥ 24 的包时（如 v1.24 词库更新），用户才会收到更新。
+> 当前线上 v1.24 与 versionCode 24 的 APK 内置版本一致，刚安装 v1.24 APK 的用户会显示「已是最新版本」；旧版 APK（versionCode ≤ 23）打开 App 即会收到 v1.24 更新提示。下次发布 versionCode ≥ 25 的包时，已装 v1.24 的用户才会再次收到更新。
 
 也可以在本地手动打包预览：
 
