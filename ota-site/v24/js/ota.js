@@ -85,19 +85,46 @@
     return once(0);
   }
 
-  /* 多通道拉取清单：主地址与镜像并发，谁先成功用谁 */
+  /* 多通道拉取清单：并发请求全部通道，在短窗口内收集成功响应，
+     取 versionCode 最大的一份。避免某个 CDN 镜像缓存旧清单抢先返回，
+     导致误判「已是最新版本」（用户会表现为收不到更新）。 */
   function fetchManifest(urls) {
     return new Promise(function (resolve, reject) {
-      var left = urls.length, done = false;
-      if (!left) { reject(new Error("未配置更新地址")); return; }
+      var results = [], failed = 0, done = false;
+      var settleTimer = null, windowTimer = null;
+
+      function finish() {
+        if (done) return;
+        done = true;
+        if (settleTimer) clearTimeout(settleTimer);
+        if (windowTimer) clearTimeout(windowTimer);
+        if (!results.length) { reject(new Error("网络异常")); return; }
+        var best = null;
+        results.forEach(function (h) {
+          try {
+            var m = JSON.parse(h.text);
+            var vc = Number(m.versionCode) || 0;
+            if (!best || vc > best.vc) best = { url: h.url, text: h.text, vc: vc };
+          } catch (e) { /* 单个通道返回非 JSON，忽略 */ }
+        });
+        if (!best) { reject(new Error("更新信息格式错误")); return; }
+        resolve({ url: best.url, text: best.text });
+      }
+
+      /* 总兜底：即使部分通道迟迟不响应，也最多等 3.5 秒 */
+      settleTimer = setTimeout(finish, 3500);
       urls.forEach(function (u) {
         fetchText(u, T_MANIFEST).then(function (text) {
           if (done) return;
-          done = true;
-          resolve({ url: u, text: text });
-        }, function (e) {
-          left--;
-          if (left === 0 && !done) reject(e || new Error("网络异常"));
+          results.push({ url: u, text: text });
+          if (urls.length === 1) { finish(); return; }
+          /* 首个成功后留 900ms 窗口，让其它（可能更新更及时）通道也返回 */
+          if (!windowTimer) windowTimer = setTimeout(finish, 900);
+          if (results.length + failed >= urls.length) finish();
+        }, function () {
+          if (done) return;
+          failed++;
+          if (results.length + failed >= urls.length) finish();
         });
       });
     });
